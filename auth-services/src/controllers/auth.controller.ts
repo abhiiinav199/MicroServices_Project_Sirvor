@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { registerUser } from "../services/auth.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
 
-const signUpController= async (req: Request , res: Response, next: NextFunction)=>{
+export const signUpController= async (req: Request , res: Response, next: NextFunction)=>{
 try {
     const {fullName,password,email,role} =req.body;
      
