@@ -1,9 +1,9 @@
 import express,{NextFunction, Request, Response} from "express"
 import { ApiError } from "../utils/ApiError.js";
-import { registerUser } from "../services/auth.service.js";
+import { sendEmailUser } from "../services/auth.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
 
-export const signUpController= async (req: Request , res: Response, next: NextFunction)=>{
+export const sendEmailController= async (req: Request , res: Response, next: NextFunction)=>{
 try {
     const {fullName,password,email,role} =req.body;
      
@@ -17,7 +17,7 @@ try {
      }
 
      //service call
-     const newOtp = await registerUser({fullName,password,email,role})
+     const newOtp = await sendEmailUser({fullName,password,email,role})
 
     //  return response
     res.status(201).json({

@@ -9,7 +9,7 @@ interface IUserData {
   email: string;
   role: "User" | "Worker" | "Admin";
 }
-export const registerUser = async (data: IUserData) => {
+export const sendEmailUser = async (data: IUserData) => {
   const { email, password, fullName, role } = data;
 
   const isUserExist = await UserModel.findOne({ email: email });

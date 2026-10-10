@@ -1,8 +1,8 @@
 import express from "express"
-import { signUpController } from "../controllers/auth.controller.js"
+import { sendEmailController } from "../controllers/auth.controller.js"
 
 const authRouter= express.Router()
 
-authRouter.post("/signup", signUpController)
+authRouter.post("/signup", sendEmailController)
 
 export default authRouter
