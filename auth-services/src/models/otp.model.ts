@@ -2,7 +2,8 @@ import mongoose from "mongoose";
 
 interface IOtp{
     email: string,
-    otp: number
+    otp: number,
+    createdAt: Date
 }
 const otpSchema = new mongoose.Schema<IOtp>({
     email:{
@@ -15,6 +16,11 @@ const otpSchema = new mongoose.Schema<IOtp>({
         required: [true,"Please provide otp."],
         trim: true,
         maxLength: [4, "Please provide valid otp"]
+    },
+    createdAt:{
+        type: Date,
+        default: Date.now,
+        expires: 5*60
     }
 })
 
