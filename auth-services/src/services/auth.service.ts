@@ -1,3 +1,4 @@
+import axios from "axios";
 import { OtpModel } from "../models/otp.model.js";
 import { UserModel } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -22,6 +23,13 @@ const newOtp = await otpGenerator.generate(4, { upperCaseAlphabets: false, speci
 // save otp in db
 const savedOtp = await OtpModel.create({email:email,otp: Number(newOtp)})
 
+const mailData= {
+  email: email,
+  subject: "For Otp verification",
+  body:"",
+  from: "Sirvor"
+}
+const mailServiceCall = await axios.post("http://localhost:3002/api/v1/send-email")
 return savedOtp;
   
 };

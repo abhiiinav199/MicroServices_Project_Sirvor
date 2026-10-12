@@ -6,7 +6,7 @@ dotenv.config()
 const app:Application = express()
 const PORT = process.env.PORT|| 4001
 
-app.use("/api/v1/auth", proxy("http://localhost:3000"))
+app.use("/api/v1/auth", proxy("http://localhost:3001"))
 
 
 const startServer = async (): Promise<void> => {
