@@ -5,10 +5,10 @@ export const sendEmailService= async(data:IMailData) =>{
     const {email, subject, body, from} = data
 
      let info= await transporter.sendMail({
-            from: data.from,
-            to: data.email,
-            subject: data.subject,
-            html: data.body 
+            from: from,
+            to: email,
+            subject: subject,
+            html: body 
         })
         return info
 }
