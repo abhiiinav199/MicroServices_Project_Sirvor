@@ -5,15 +5,11 @@ import { ApiError } from "../utils/ApiError.js";
 import otpGenerator from "otp-generator"
 import { sendMailTemplate } from "../mail-template/mailTemplate.js";
 
-interface IUserData {
-  fullName: string;
-  password: string;
-  confirmPassword: string;
+export interface IUserData {
   email: string;
-  role: "User" | "Worker" | "Admin";
 }
 export const sendEmailUser = async (data: IUserData) => {
-  const { email, password, fullName, role, confirmPassword } = data;
+  const { email } = data;
 
   const isUserExist = await UserModel.findOne({ email: email });
 
