@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/ApiError.js";
-import { sendEmailUser } from "../services/auth.service.js";
+import { sendEmailUser } from "../services/otp.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
 
 export const sendEmailController = async (
@@ -45,3 +45,25 @@ export const sendEmailController = async (
     next(error); // Error handler middleware
   }
 };
+
+export const signUpController= async(req: Request , res: Response , next: NextFunction)=>{
+  try {
+    const {fullName, email , password, role, confirmPassword, otp} = req.body
+    if(!fullName || !email || !password || !role || !confirmPassword){
+      throw new ApiError("Something went wrong", 400)
+    }
+
+    if(!otp){
+      throw new ApiError("Please fill the otp",400)
+    }
+
+    if(otp.length < 4){
+      throw new ApiError("Please fill valid otp", 400)
+
+    }
+
+    // call signUp service
+  } catch (error) {
+    next(error)
+  }
+}
