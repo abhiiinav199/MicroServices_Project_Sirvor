@@ -8,11 +8,12 @@ import { sendMailTemplate } from "../mail-template/mailTemplate.js";
 interface IUserData {
   fullName: string;
   password: string;
+  confirmPassword: string;
   email: string;
   role: "User" | "Worker" | "Admin";
 }
 export const sendEmailUser = async (data: IUserData) => {
-  const { email, password, fullName, role } = data;
+  const { email, password, fullName, role, confirmPassword } = data;
 
   const isUserExist = await UserModel.findOne({ email: email });
 
