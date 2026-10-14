@@ -27,7 +27,7 @@ const mailData= {
   body:sendMailTemplate(savedOtp.otp),
   from: "Sirvor"
 }
-const mailServiceCall = await axios.post("http://localhost:3002/api/v1/send-email",{mailData})
+const mailServiceCall = await axios.post("http://localhost:3002/api/v1/send-email",mailData)
 
 
 return savedOtp;

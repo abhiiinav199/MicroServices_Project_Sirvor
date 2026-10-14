@@ -30,7 +30,7 @@ export const singUpService = async (data: IUserSignupData) => {
   if (!latestOtp) {
     throw new ApiError("Otp Not Found", 404);
   }
-  if (latestOtp.otp !== otp) {
+  if (latestOtp.otp !== Number(otp)) {
     throw new ApiError("Otp not found", 422);
   }
 
@@ -44,6 +44,9 @@ export const singUpService = async (data: IUserSignupData) => {
     role: role,
   });
 
+  //delete otp from db
+  await OtpModel.deleteMany({ email: email });
+
   const payload = {
     userId: newUser._id,
     email: email,
@@ -52,8 +55,8 @@ export const singUpService = async (data: IUserSignupData) => {
   };
 
   const token = await generateAccessToken(payload);
-    return {
-      user: newUser,
-      token: token
-    }
+  return {
+    user: newUser,
+    token: token,
+  };
 };

@@ -1,6 +1,6 @@
 
 export const sendMailTemplate= (OTP:number) =>{
-  `<body>
+  return `<body>
   <div class="email-container">
 
     <!-- Header -->

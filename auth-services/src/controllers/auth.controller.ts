@@ -52,12 +52,15 @@ export const signUpController = async (
     if (!fullName || !email || !password || !role || !confirmPassword) {
       throw new ApiError("Something went wrong", 400);
     }
+    if (password !== confirmPassword){
+       throw new ApiError("Something went wrong", 400);
+    }
 
     if (!otp) {
       throw new ApiError("Please fill the otp", 400);
     }
 
-    if (otp.length < 4) {
+    if (String(otp).length < 4) {
       throw new ApiError("Please fill valid otp", 400);
     }
 

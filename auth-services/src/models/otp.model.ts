@@ -14,8 +14,6 @@ const otpSchema = new mongoose.Schema<IOtp>({
     otp:{
         type: Number,
         required: [true,"Please provide otp."],
-        trim: true,
-        maxLength: [4, "Please provide valid otp"]
     },
     createdAt:{
         type: Date,
