@@ -52,8 +52,8 @@ export const signUpController = async (
     if (!fullName || !email || !password || !role || !confirmPassword) {
       throw new ApiError("Something went wrong", 400);
     }
-    if (password !== confirmPassword){
-       throw new ApiError("Something went wrong", 400);
+    if (password !== confirmPassword) {
+      throw new ApiError("Something went wrong", 400);
     }
 
     if (!otp) {
@@ -73,6 +73,15 @@ export const signUpController = async (
       role,
       otp,
     });
+
+    const cookieOptions = {
+      expires: new Date(Date.now() + 3*24*60*60*1000),
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+  }as const;
+
+    res.cookie("token", newUser.token , cookieOptions)
 
     return res.status(201).json({
       success: true,
