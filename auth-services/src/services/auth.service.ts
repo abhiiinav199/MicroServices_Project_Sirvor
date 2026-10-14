@@ -3,6 +3,7 @@ import { UserModel } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { generateAccessToken } from "../utils/generateAccessToken.js";
 import { hashPassword } from "../utils/hashPassword.js";
+import bcryptjs from "bcryptjs";
 
 interface IUserSignupData {
   fullName: string;
@@ -10,6 +11,12 @@ interface IUserSignupData {
   email: string;
   role: "User" | "Worker" | "Admin";
   otp: number;
+}
+
+interface ILoginData{
+  email: string,
+  password: string,
+
 }
 
 export const singUpService = async (data: IUserSignupData) => {
@@ -60,3 +67,37 @@ export const singUpService = async (data: IUserSignupData) => {
     token: token,
   };
 };
+
+
+export const loginService= async (data: ILoginData)=>{
+  const {email,password} = data
+
+  // check this email is registered or not
+  const isUserExist = await UserModel.findOne({
+    email: email
+  })
+
+  if(!isUserExist){
+    throw new ApiError("User not exist",404)
+  }
+ //compare password using bcryptjs
+ const checkPassword = await bcryptjs.compare(password, isUserExist.password)
+
+ if(!checkPassword){
+  throw new ApiError("Password not matched", 422)
+ }
+
+ const payload={
+  email: email,
+   userId: isUserExist._id,
+   fullName: isUserExist.fullName,
+   role: isUserExist.role 
+ }
+
+ const token= generateAccessToken(payload)
+
+ return {
+  user: isUserExist,
+  token: token
+ }
+}

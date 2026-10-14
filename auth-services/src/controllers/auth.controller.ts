@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/ApiError.js";
 import { sendEmailUser } from "../services/otp.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
-import { singUpService } from "../services/auth.service.js";
+import { loginService, singUpService } from "../services/auth.service.js";
 
 export const sendEmailController = async (
   req: Request,
@@ -93,3 +93,34 @@ export const signUpController = async (
     next(error);
   }
 };
+
+export const loginController = async (req: Request , res: Response, next: NextFunction)=>{
+  try {
+    const {email, password} = req.body
+
+    if(!email || !password){
+      throw new ApiError("Please fill all the details",400 )
+    }
+
+    // call login service
+    const user= await loginService({email, password})
+
+      const cookieOptions = {
+      expires: new Date(Date.now() + 3*24*60*60*1000),
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+  }as const;
+
+    res.cookie("token", user.token , cookieOptions)
+    
+    res.status(200).json({
+      error: false,
+      success:true,
+      message:"Login Successfull",
+      data: user
+    })
+  } catch (error) {
+    next(error)
+  }
+}
