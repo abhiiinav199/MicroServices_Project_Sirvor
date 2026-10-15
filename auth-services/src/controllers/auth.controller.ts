@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { sendEmailUser } from "../services/otp.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
 import { loginService, singUpService } from "../services/auth.service.js";
+import { forgotPasswordServices } from "../services/password.service.js";
 
 export const sendEmailController = async (
   req: Request,
@@ -119,7 +120,30 @@ export const loginController = async (req: Request , res: Response, next: NextFu
       success:true,
       message:"Login Successfull",
       data: user
-    })
+    }as ApiResponse<typeof user>)
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+export const forgotPasswordController= async (req: Request , res: Response, next: NextFunction)=>{
+  try {
+    const {email} = req.body
+     
+    if(!email){
+      throw new ApiError("Please Provide email",400)
+    }
+
+    //call the forgotPasswordServices
+     const forgetPassword= forgotPasswordServices(email)
+    
+     res.status(200).json({
+      error: false,
+      success:true,
+      message:"Password changed",
+      data: forgetPassword
+    }as ApiResponse<typeof forgetPassword>)
   } catch (error) {
     next(error)
   }

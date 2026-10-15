@@ -6,6 +6,8 @@ export interface IUser {
   email: string;
   role: "User" | "Worker" | "Admin";
   token: string;
+  resetToken: string;
+  resetTokenExpiry:string;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -36,6 +38,12 @@ const userSchema = new mongoose.Schema<IUser>(
     // token:{
     //     type: String
     // }
+    resetToken:{
+      type: String
+    },
+    resetTokenExpiry:{
+      type: String
+    }
   },
   { timestamps: true },
 );
