@@ -3,6 +3,7 @@ import { UserModel } from "../models/user.model.js"
 import { OtpModel } from "../models/otp.model.js"
 import { sendMailTemplate } from "../mail-template/mailTemplate.js"
 import axios from "axios"
+import { ApiError } from "../utils/ApiError.js"
 
 export interface IForgotPasswordData{
     email: string
@@ -13,6 +14,12 @@ export const forgotPasswordServices= async(data:IForgotPasswordData)=>{
 
     // check user exist or not
     const isUserExist = await UserModel.findOne({email:email})
+
+    if(!isUserExist){
+        throw new ApiError("Please provide valid email, User not found",404)
+    }
+
+
 
     // generate new otp
     const otp = await otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
