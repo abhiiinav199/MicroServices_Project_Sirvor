@@ -4,9 +4,14 @@ import { OtpModel } from "../models/otp.model.js"
 import { sendMailTemplate } from "../mail-template/mailTemplate.js"
 import axios from "axios"
 import { ApiError } from "../utils/ApiError.js"
+import crypto from "crypto"
 
 export interface IForgotPasswordData{
     email: string
+}
+
+export interface IForgotPasswordVerifyOtpData extends IForgotPasswordData{
+    otp: number
 }
 export const forgotPasswordServices= async(data:IForgotPasswordData)=>{
 
@@ -40,4 +45,30 @@ export const forgotPasswordServices= async(data:IForgotPasswordData)=>{
 const mailServiceCall = await axios.post("http://localhost:3002/api/v1/send-email",mailData)
 
 return newOtp;
+}
+
+export const forgotPasswordVerifyOtpService= async(data:IForgotPasswordVerifyOtpData)=>{
+
+    const {email, otp}= data;
+
+    const [latestOtp] = await Promise.all([
+        OtpModel.findOne({email:email}).sort({
+            createtedAt: -1
+        })
+    ])
+
+    if(!latestOtp){
+        throw new ApiError("Otp not found or expired", 404)
+    }
+
+    if(latestOtp.otp !== Number(otp)){
+        throw new ApiError("Otp not matched", 422)
+    }
+
+    //genrate token using crypto
+    const token = crypto.randomBytes(32).toString("hex")
+
+    const updatedUser =await UserModel.findOneAndUpdate({email: email}, {resetToken: token, resetTokenExpiry: Date.now()+ 10*60 *1000},{new: true})
+
+    return updatedUser
 }

@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { sendEmailUser } from "../services/otp.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
 import { loginService, singUpService } from "../services/auth.service.js";
-import { forgotPasswordServices } from "../services/password.service.js";
+import { forgotPasswordServices, forgotPasswordVerifyOtpService } from "../services/password.service.js";
 
 export const sendEmailController = async (
   req: Request,
@@ -144,6 +144,35 @@ export const forgotPasswordController= async (req: Request , res: Response, next
       message:"Password changed",
       data: forgetPassword
     }as ApiResponse<typeof forgetPassword>)
+  } catch (error) {
+    next(error)
+  }
+}
+
+
+export const forgotPasswordVerifyOtpController= async (req :Request, res: Response, next: NextFunction)=>{
+  try {
+
+    const {email, otp} = req.body
+
+    if(!email || !otp){
+      throw new ApiError("Please fill the otp", 400)
+    }
+
+    if(otp.length >4){
+      throw new ApiError("Please fill the otp", 400)
+    }
+    
+    // call forgotPasswordVerifyOtpService
+    const forgotPasswordVerify= forgotPasswordVerifyOtpService({email, otp})
+
+    res.status(200).json({
+      error: false,
+      success:true,
+      message:"Otp verification successfull",
+      data: forgotPasswordVerify
+    }as ApiResponse<typeof forgotPasswordVerify>)
+
   } catch (error) {
     next(error)
   }
