@@ -68,7 +68,7 @@ export const forgotPasswordVerifyOtpService= async(data:IForgotPasswordVerifyOtp
     //genrate token using crypto
     const token = crypto.randomBytes(32).toString("hex")
 
-    const updatedUser =await UserModel.findOneAndUpdate({email: email}, {resetToken: token, resetTokenExpiry: Date.now()+ 10*60 *1000},{new: true})
+    const updatedUser =await UserModel.findOneAndUpdate({email: email}, {resetToken: token, resetTokenExpiry: Date.now()+ 10*60 *1000}, {returnDocument: "after"})
 
     return updatedUser
 }
