@@ -5,6 +5,7 @@ import { sendMailTemplate } from "../mail-template/mailTemplate.js"
 import axios from "axios"
 import { ApiError } from "../utils/ApiError.js"
 import crypto from "crypto"
+import { hashPassword } from "../utils/hashPassword.js"
 
 export interface IForgotPasswordData{
     email: string
@@ -12,6 +13,11 @@ export interface IForgotPasswordData{
 
 export interface IForgotPasswordVerifyOtpData extends IForgotPasswordData{
     otp: number
+}
+
+export interface IResetPasswordData{
+    password: string,
+    token:string
 }
 export const forgotPasswordServices= async(data:IForgotPasswordData)=>{
 
@@ -68,7 +74,42 @@ export const forgotPasswordVerifyOtpService= async(data:IForgotPasswordVerifyOtp
     //genrate token using crypto
     const token = crypto.randomBytes(32).toString("hex")
 
-    const updatedUser =await UserModel.findOneAndUpdate({email: email}, {resetToken: token, resetTokenExpiry: Date.now()+ 10*60 *1000}, {returnDocument: "after"})
+    const updatedUser =await UserModel.findOneAndUpdate({email: email}, {resetToken: token, resetTokenExpiry: Date.now()+ 10*60 *1000}, {returnDocument: "after", runValidators: true})
 
     return updatedUser
+}
+
+
+export const resetPasswordService= async(data: IResetPasswordData)=>{
+
+    const {password , token} = data
+
+    // find the user with the help of token
+    const userDetails = await UserModel.findOne({resetToken:token})
+
+    // validation
+    if(!userDetails){
+        throw new ApiError("Session expired", 404)
+    }
+    if(userDetails.resetTokenExpiry < Date.now().toString()){
+        throw new ApiError("Session expired",401)
+    }
+
+    const hashedPassword= await hashPassword(password)
+
+    //update the user   
+    const updatedUser = await UserModel.findOneAndUpdate(
+  { resetToken: token },
+  {
+    password: hashedPassword,
+    resetToken: "",
+    resetTokenExpiry: ""
+  },
+  {
+    returnDocument: "after",
+    runValidators: true
+  }
+);
+
+return updatedUser
 }

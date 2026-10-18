@@ -3,7 +3,8 @@ import { ApiError } from "../utils/ApiError.js";
 import { sendEmailUser } from "../services/otp.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
 import { loginService, singUpService } from "../services/auth.service.js";
-import { forgotPasswordServices, forgotPasswordVerifyOtpService } from "../services/password.service.js";
+import { forgotPasswordServices, forgotPasswordVerifyOtpService, resetPasswordService } from "../services/password.service.js";
+import { error } from "console";
 
 export const sendEmailController = async (
   req: Request,
@@ -172,6 +173,40 @@ export const forgotPasswordVerifyOtpController= async (req :Request, res: Respon
       message:"Otp verification successfull",
       data: forgotPasswordVerify
     }as ApiResponse<typeof forgotPasswordVerify>)
+
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const resetPasswordController= async (req :Request, res: Response, next: NextFunction)=>{
+  try {
+    // fetch data
+    const {password, confirmPassword, token} = req.body
+
+    if(!password || !confirmPassword){
+      throw new ApiError("Please fill all the details", 400)
+    }
+
+    if(!token){
+      throw new ApiError("Something went wrong while fetching token",400)
+    }
+
+    if(password !== confirmPassword){
+      throw new ApiError("Password and Confirm Password does not matched", 422)
+    }
+    if(password.length<3){
+      throw new ApiError("Password is too short", 422)
+    }
+
+    //call resetPasswordService
+    const resetPassword= await resetPasswordService({password, token})
+
+    return res.status(200).json({
+      error:false,
+      success:true,
+      message: "Pasword reset successfully "
+    } as ApiResponse<null>)
 
   } catch (error) {
     next(error)
