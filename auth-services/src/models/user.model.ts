@@ -7,7 +7,7 @@ export interface IUser {
   role: "User" | "Worker" | "Admin";
   token: string;
   resetToken: string;
-  resetTokenExpiry:string;
+  resetTokenExpiry:number;
 }
 
 const userSchema = new mongoose.Schema<IUser>(
@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema<IUser>(
       type: String
     },
     resetTokenExpiry:{
-      type: String
+      type: Number
     }
   },
   { timestamps: true },

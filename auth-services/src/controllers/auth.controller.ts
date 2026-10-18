@@ -137,12 +137,12 @@ export const forgotPasswordController= async (req: Request , res: Response, next
     }
 
     //call the forgotPasswordServices
-     const forgetPassword= forgotPasswordServices(email)
+     const forgetPassword= await forgotPasswordServices({email})
     
      res.status(200).json({
       error: false,
       success:true,
-      message:"Password changed",
+      message:"OTP sent to your mail",
       data: forgetPassword
     }as ApiResponse<typeof forgetPassword>)
   } catch (error) {
@@ -160,12 +160,12 @@ export const forgotPasswordVerifyOtpController= async (req :Request, res: Respon
       throw new ApiError("Please fill the otp", 400)
     }
 
-    if(otp.length >4){
-      throw new ApiError("Please fill the otp", 400)
+    if(String(otp).length !== 4){
+      throw new ApiError("Please provide a valid 4-digit OTP", 400)
     }
     
     // call forgotPasswordVerifyOtpService
-    const forgotPasswordVerify= forgotPasswordVerifyOtpService({email, otp})
+    const forgotPasswordVerify= await forgotPasswordVerifyOtpService({email, otp})
 
     res.status(200).json({
       error: false,

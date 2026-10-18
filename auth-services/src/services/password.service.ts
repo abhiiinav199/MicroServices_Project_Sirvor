@@ -59,7 +59,7 @@ export const forgotPasswordVerifyOtpService= async(data:IForgotPasswordVerifyOtp
 
     const [latestOtp] = await Promise.all([
         OtpModel.findOne({email:email}).sort({
-            createtedAt: -1
+            createdAt: -1
         })
     ])
 
@@ -76,6 +76,8 @@ export const forgotPasswordVerifyOtpService= async(data:IForgotPasswordVerifyOtp
 
     const updatedUser =await UserModel.findOneAndUpdate({email: email}, {resetToken: token, resetTokenExpiry: Date.now()+ 10*60 *1000}, {returnDocument: "after", runValidators: true})
 
+    await OtpModel.deleteMany({ email: email });
+
     return updatedUser
 }
 
@@ -91,7 +93,7 @@ export const resetPasswordService= async(data: IResetPasswordData)=>{
     if(!userDetails){
         throw new ApiError("Session expired", 404)
     }
-    if(userDetails.resetTokenExpiry < Date.now().toString()){
+    if(userDetails.resetTokenExpiry < Date.now()){
         throw new ApiError("Session expired",401)
     }
 
@@ -102,8 +104,7 @@ export const resetPasswordService= async(data: IResetPasswordData)=>{
   { resetToken: token },
   {
     password: hashedPassword,
-    resetToken: "",
-    resetTokenExpiry: ""
+    $unset: { resetToken: 1, resetTokenExpiry: 1 }
   },
   {
     returnDocument: "after",
