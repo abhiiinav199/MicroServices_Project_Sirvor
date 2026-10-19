@@ -6,6 +6,7 @@ import axios from "axios"
 import { ApiError } from "../utils/ApiError.js"
 import crypto from "crypto"
 import { hashPassword } from "../utils/hashPassword.js"
+import { comparePassword } from "../utils/comparePassword.js"
 
 export interface IForgotPasswordData{
     email: string
@@ -18,6 +19,12 @@ export interface IForgotPasswordVerifyOtpData extends IForgotPasswordData{
 export interface IResetPasswordData{
     password: string,
     token:string
+}
+
+export interface IUpdatePasswordData{
+    userId: string,
+    password: string,
+    oldPassword: string
 }
 export const forgotPasswordServices= async(data:IForgotPasswordData)=>{
 
@@ -113,4 +120,34 @@ export const resetPasswordService= async(data: IResetPasswordData)=>{
 );
 
 return updatedUser
+}
+
+export const updatePasswordService = async(data:IUpdatePasswordData)=>{
+    const {userId, password, oldPassword,}= data
+
+    const userDetails= await UserModel.findById(userId)
+
+    if(!userDetails){
+        throw new ApiError("User not found", 404)
+    }
+
+    // verify old password
+    const isMatchedPassword = await comparePassword({
+        oldPassword,
+        dbPassword: userDetails.password
+    });
+
+    if(!isMatchedPassword){
+        throw new ApiError("Old password not matched",422)
+    }
+
+    // hash password
+    const hashedPassword= await hashPassword(password)
+
+    // update user password
+    const updatedUser= await UserModel.findByIdAndUpdate(userId, {
+        password:hashedPassword
+    },{returnDocument:"after", runValidators: true})
+
+    return updatedUser
 }

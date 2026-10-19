@@ -3,7 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { sendEmailUser } from "../services/otp.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
 import { loginService, singUpService } from "../services/auth.service.js";
-import { forgotPasswordServices, forgotPasswordVerifyOtpService, resetPasswordService } from "../services/password.service.js";
+import { forgotPasswordServices, forgotPasswordVerifyOtpService, resetPasswordService, updatePasswordService } from "../services/password.service.js";
 import { error } from "console";
 
 export const sendEmailController = async (
@@ -208,6 +208,43 @@ export const resetPasswordController= async (req :Request, res: Response, next: 
       message: "Pasword reset successfully "
     } as ApiResponse<null>)
 
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const updatePasswordController= async(req:Request, res: Response,next:NextFunction)=>{
+  try {
+    
+    const {userId,password, oldPassword, confirmPassword}= req.body
+
+    if(!userId){
+      throw new ApiError("Something went wrong during fetching userId",400)
+    }
+
+    if(!password || !oldPassword || !confirmPassword){
+      throw new ApiError("Please fill all the input fields", 400)
+    }
+
+     if (password !== confirmPassword) {
+      throw new ApiError("Something went wrong", 400);
+    }
+
+    if(password === oldPassword){
+      throw new ApiError("Old and new password is same", 409)
+    }
+
+    // call updatePasswordService
+      const updatedPassword= updatePasswordService({ userId,
+    password,
+    oldPassword})
+
+
+    return res.status(200).json({
+      error: false,
+      success: true,
+      message: "Password changed successfully"
+    }as ApiResponse<typeof updatedPassword>)
   } catch (error) {
     next(error)
   }
