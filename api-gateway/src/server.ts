@@ -1,21 +1,45 @@
-import express, { Application } from "express"
-import proxy from "express-http-proxy"
-import dotenv from "dotenv"
-dotenv.config()
+import express, { Application } from "express";
+import proxy from "express-http-proxy";
+import dotenv from "dotenv";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import { loginValidation } from "./middlewares/auth.js";
 
-const app:Application = express()
-const PORT = process.env.PORT|| 4001
+dotenv.config();
 
-app.use("/api/v1/auth", proxy("http://localhost:3001"))
+const app: Application = express();
+const PORT = process.env.PORT || 4001;
+const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:3001";
 
+// Central Proxy with header decorator (Industry Standard)
+const authProxy = proxy(AUTH_SERVICE_URL, {
+  proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+    // 1. Sanitize: delete any spoofed header from client
+    delete proxyReqOpts.headers["x-user"];
+
+    // 2. Inject verified userId from decoded token if logged in
+    if ((srcReq as any).user) {
+      proxyReqOpts.headers["x-user"] = JSON.stringify((srcReq as any).user);
+    }
+
+    return proxyReqOpts;
+  },
+});
+
+// Protected routes (apply auth middleware before proxy)
+app.use("/api/v1/auth/update-password", loginValidation);
+
+// Forward all /api/v1/auth/* requests to auth-service
+app.use("/api/v1/auth", authProxy);
+
+app.use(errorHandler);
 
 const startServer = async (): Promise<void> => {
   try {
     app.listen(PORT, () => {
-      console.log(`Gateway service is succesfully running at port number: "http://localhost:${PORT}"`);
+      console.log(`Gateway service is successfully running at http://localhost:${PORT}`);
     });
   } catch (error) {
-    console.log("Error in connection",error);
+    console.log("Error in connection", error);
   }
 };
 startServer();

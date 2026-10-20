@@ -2,7 +2,7 @@ import dotenv from "dotenv"
 dotenv.config()
 import app from "./app.js";
 
-const PORT= process.env.PORT || 4002
+const PORT= process.env.PORT || 4003
 
 const startServer = async()=>{
     try {

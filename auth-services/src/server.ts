@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/connectDB.js";
 dotenv.config();
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 4002;
 
 const startServer = async (): Promise<void> => {
   try {
