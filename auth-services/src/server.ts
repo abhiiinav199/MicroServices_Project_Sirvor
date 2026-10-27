@@ -1,6 +1,7 @@
 import app from "./app.js";
 import dotenv from "dotenv";
 import { connectDB } from "./config/connectDB.js";
+import { redisConnect } from "./config/redis.config.js";
 dotenv.config();
 
 const PORT = process.env.PORT || 4002;
@@ -8,6 +9,7 @@ const PORT = process.env.PORT || 4002;
 const startServer = async (): Promise<void> => {
   try {
     await connectDB()
+    await redisConnect()
     app.listen(PORT, () => {
       console.log(`Auth service is succesfully running at port number: "http://localhost:${PORT}"`);
     });
