@@ -33,7 +33,7 @@ export const redisConnect = async () => {
 };
 
 
-const getRedisClient = ()=>{
+export const getRedisClient = ()=>{
     if(!client){
         throw new Error("Redis Client not intialized")
     }

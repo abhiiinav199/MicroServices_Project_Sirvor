@@ -125,7 +125,7 @@ return updatedUser
 export const updatePasswordService = async(data:IUpdatePasswordData)=>{
     const {userId, password, oldPassword,}= data
 
-    const userDetails= await UserModel.findById(userId)
+    const userDetails= await UserModel.findById(userId).select("+password")
 
     if(!userDetails){
         throw new ApiError("User not found", 404)
@@ -149,5 +149,5 @@ export const updatePasswordService = async(data:IUpdatePasswordData)=>{
         password:hashedPassword
     },{returnDocument:"after", runValidators: true})
 
-    return updatedUser
+    return {message: "Password updated successfully"}
 }

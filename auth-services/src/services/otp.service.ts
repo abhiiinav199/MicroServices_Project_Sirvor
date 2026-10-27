@@ -1,9 +1,11 @@
 import axios from "axios";
-import { OtpModel } from "../models/otp.model.js";
 import { UserModel } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import otpGenerator from "otp-generator"
 import { sendMailTemplate } from "../mail-template/mailTemplate.js";
+import { getRedisClient } from "../config/redis.config.js";
+import dotenv from "dotenv"
+dotenv.config()
 
 export interface IUserData {
   email: string;
@@ -18,18 +20,20 @@ export const sendEmailUser = async (data: IUserData) => {
   }
 const newOtp = await otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
 
-// save otp in db
-const savedOtp = await OtpModel.create({email:email,otp: Number(newOtp)})
+// save otp in redis
+const client = getRedisClient()
+await client.set(`signup_otp:${email}`, newOtp,{
+  EX: 300
+})
+
 
 const mailData= {
   email: email,
   subject: "For Otp verification",
-  body:sendMailTemplate(savedOtp.otp),
+  body:sendMailTemplate(Number(newOtp)),
   from: "Sirvor"
 }
-const mailServiceCall = await axios.post("http://localhost:3002/api/v1/send-email",mailData)
+await axios.post(`${process.env.MAIL_SERVICE_URL}/api/v1/send-email`, mailData)
 
-
-return savedOtp;
   
 };

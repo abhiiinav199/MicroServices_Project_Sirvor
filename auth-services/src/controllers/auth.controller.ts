@@ -9,7 +9,6 @@ import {
   resetPasswordService,
   updatePasswordService,
 } from "../services/password.service.js";
-import { error } from "console";
 
 export const sendEmailController = async (
   req: Request,
@@ -41,9 +40,10 @@ export const sendEmailController = async (
 
     //  return response
     res.status(201).json({
+      success: true,
+      error: false,
       message: "Otp sent on your email.",
-      data: newOtp,
-    } as ApiResponse<typeof newOtp>);
+    } as ApiResponse<null>);
   } catch (error) {
     next(error); // Error handler middleware
   }
@@ -155,8 +155,7 @@ export const forgotPasswordController = async (
       error: false,
       success: true,
       message: "OTP sent to your mail",
-      data: forgetPassword,
-    } as ApiResponse<typeof forgetPassword>);
+    } as ApiResponse<null>);
   } catch (error) {
     next(error);
   }
@@ -239,9 +238,9 @@ export const updatePasswordController = async (
 ) => {
   try {
     // 1. Get verified userId directly from Gateway headers (do NOT JSON.parse)
-    const userHeader = req.headers["x-user"] as string ;
-    const userData =userHeader ? JSON.parse(userHeader) : null;
-    const userId = userData?.id
+    const userHeader = req.headers["x-user"] as string;
+    const userData = userHeader ? JSON.parse(userHeader) : null;
+    const userId = userData?.userId ||userData?.id;
     if (!userId) {
       throw new ApiError("Unauthorized, user identification missing", 401);
     }

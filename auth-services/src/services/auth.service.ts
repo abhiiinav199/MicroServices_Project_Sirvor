@@ -1,3 +1,4 @@
+import { getRedisClient } from "../config/redis.config.js";
 import { OtpModel } from "../models/otp.model.js";
 import { UserModel } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -13,10 +14,9 @@ interface IUserSignupData {
   otp: number;
 }
 
-interface ILoginData{
-  email: string,
-  password: string,
-
+interface ILoginData {
+  email: string;
+  password: string;
 }
 
 export const singUpService = async (data: IUserSignupData) => {
@@ -29,17 +29,22 @@ export const singUpService = async (data: IUserSignupData) => {
     throw new ApiError("Email already registered", 409);
   }
 
-  //find latest otp
-  const latestOtp = await OtpModel.findOne({
-    email: email,
-  }).sort({ createdAt: -1 });
+  // 1. Verify OTP from Redis
+  const redisClient = getRedisClient();
+  const storedOtp = await redisClient.get(`signup_otp:${email}`);
 
-  if (!latestOtp) {
-    throw new ApiError("Otp Not Found", 404);
+  if (!storedOtp) {
+    throw new ApiError(
+      "OTP expired or not found. Please request a new OTP.",
+      404,
+    );
   }
-  if (latestOtp.otp !== Number(otp)) {
-    throw new ApiError("Otp not found", 422);
+  if (storedOtp !== String(otp)) {
+    throw new ApiError("Invalid OTP. Please try again.", 422);
   }
+
+  // 2. After matching OTP delete it from redis
+  await redisClient.del(`signup_otp:${email}`);
 
   //hashing password
   const hashedPassword = await hashPassword(password);
@@ -55,49 +60,55 @@ export const singUpService = async (data: IUserSignupData) => {
   await OtpModel.deleteMany({ email: email });
 
   const payload = {
-    userId: newUser._id,
+    userId: newUser._id.toString(),
     email: email,
     role: role,
     fullName: fullName,
   };
 
   const token = await generateAccessToken(payload);
+  // Sensitive data sanitize
+  const userResponse = newUser.toObject();
+  delete (userResponse as any).password;
   return {
-    user: newUser,
+    user: userResponse,
     token: token,
   };
 };
 
-
-export const loginService= async (data: ILoginData)=>{
-  const {email,password} = data
+export const loginService = async (data: ILoginData) => {
+  const { email, password } = data;
 
   // check this email is registered or not
   const isUserExist = await UserModel.findOne({
-    email: email
-  })
+    email: email,
+  }).select("+password");
 
-  if(!isUserExist){
-    throw new ApiError("User not exist",404)
+  if (!isUserExist) {
+    throw new ApiError("Invalid email or password", 401);
   }
- //compare password using bcryptjs
- const checkPassword = await bcryptjs.compare(password, isUserExist.password)
+  //compare password using bcryptjs
+  const checkPassword = await bcryptjs.compare(password, isUserExist.password);
 
- if(!checkPassword){
-  throw new ApiError("Password not matched", 422)
- }
+  if (!checkPassword) {
+    throw new ApiError("Invalid email or password", 401);
+  }
 
- const payload={
-  email: email,
-   userId: isUserExist._id,
-   fullName: isUserExist.fullName,
-   role: isUserExist.role 
- }
+  const payload = {
+    email: isUserExist.email,
+    userId: isUserExist._id.toString(),
+    fullName: isUserExist.fullName,
+    role: isUserExist.role,
+  };
 
- const token= generateAccessToken(payload)
+  const token = generateAccessToken(payload);
 
- return {
-  user: isUserExist,
-  token: token
- }
-}
+  //Sensitive data sanitize
+  const userResponse = isUserExist.toObject();
+  delete (userResponse as any).password;
+
+  return {
+    user: userResponse,
+    token: token,
+  };
+};

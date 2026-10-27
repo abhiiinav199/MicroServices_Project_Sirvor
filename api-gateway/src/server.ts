@@ -1,12 +1,16 @@
 import express, { Application } from "express";
 import proxy from "express-http-proxy";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
+import cors from "cors"
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { loginValidation } from "./middlewares/auth.js";
-
 dotenv.config();
 
 const app: Application = express();
+app.use(cookieParser())
+app.use(cors({ origin: "*", credentials: true })) //process.env.CLIENT_URL
+
 const PORT = process.env.PORT || 4001;
 const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:3001";
 
