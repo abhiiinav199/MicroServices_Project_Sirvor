@@ -71,7 +71,8 @@ export const singUpService = async (data: IUserSignupData) => {
   delete (userResponse as any).password;
   return {
     user: userResponse,
-    token: accessToken,
+    accessToken: accessToken,
+    refreshToken: refreshToken as string | undefined
   };
 };
 
@@ -101,6 +102,7 @@ export const loginService = async (data: ILoginData) => {
   };
 
   const accessToken = generateAccessToken(payload);
+  const refreshToken = generateRefreshToken(payload)
 
   //Sensitive data sanitize
   const userResponse = isUserExist.toObject();
@@ -108,6 +110,7 @@ export const loginService = async (data: ILoginData) => {
 
   return {
     user: userResponse,
-    token:  accessToken
+    accessToken:  accessToken,
+    refreshToken: refreshToken as string | undefined
   };
 };
