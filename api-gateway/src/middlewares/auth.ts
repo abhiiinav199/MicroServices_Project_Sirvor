@@ -13,7 +13,7 @@ export const loginValidation = async (
 ): Promise<void> => {
   try {
     const token =
-      req?.cookies?.token || req?.headers?.authorization?.split(" ")[1];
+      req?.cookies?.token || req?.headers?.authorization?.split(" ")[1] || req.body?.token;
 
     if (!token) {
       throw new ApiError("Authentication token is missing", 401);
