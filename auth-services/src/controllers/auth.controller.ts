@@ -9,6 +9,7 @@ import {
   resetPasswordService,
   updatePasswordService,
 } from "../services/password.service.js";
+import { getRedisClient } from "../config/redis.config.js";
 
 export const sendEmailController = async (
   req: Request,
@@ -87,10 +88,10 @@ export const signUpController = async (
       secure: true,
       sameSite: "none",
     } as const;
- 
-     res.cookie("refreshToken", newUser.refreshToken, cookieOptions);
-  
-     newUser.refreshToken= undefined
+
+    res.cookie("refreshToken", newUser.refreshToken, cookieOptions);
+
+    newUser.refreshToken = undefined;
 
     return res.status(201).json({
       success: true,
@@ -115,6 +116,27 @@ export const loginController = async (
       throw new ApiError("Please fill all the details", 400);
     }
 
+    //redis call
+    const redisClient = getRedisClient();
+
+    //fetch user ipAddress
+    const clientIpAddress = req.ip;
+    const key = `${clientIpAddress}:request_count`;
+
+    const requestCount = await redisClient.incr(key);
+
+    // Pehli request par TTL set (60 seconds ka window)
+    if (requestCount === 1) {
+      await redisClient.expire(key, 60);
+    }
+    // Check - limit exceed or not
+    if (requestCount > 5) {
+      throw new ApiError(
+        "Too many login attempts. Please try again after 1 minute.",
+        429,
+      );
+    }
+
     // call login service
     const user = await loginService({ email, password });
 
@@ -127,7 +149,7 @@ export const loginController = async (
 
     res.cookie("refreshToken", user.refreshToken, cookieOptions);
 
-    user.refreshToken = undefined
+    user.refreshToken = undefined;
 
     res.status(200).json({
       error: false,
@@ -244,7 +266,7 @@ export const updatePasswordController = async (
     // 1. Get verified userId directly from Gateway headers (do NOT JSON.parse)
     const userHeader = req.headers["x-user"] as string;
     const userData = userHeader ? JSON.parse(userHeader) : null;
-    const userId = userData?.userId ||userData?.id;
+    const userId = userData?.userId || userData?.id;
     if (!userId) {
       throw new ApiError("Unauthorized, user identification missing", 401);
     }

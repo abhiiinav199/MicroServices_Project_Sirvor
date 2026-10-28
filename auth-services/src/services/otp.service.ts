@@ -21,8 +21,8 @@ export const sendEmailUser = async (data: IUserData) => {
 const newOtp = await otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
 
 // save otp in redis
-const client = getRedisClient()
-await client.set(`signup_otp:${email}`, newOtp,{
+const redisClient = getRedisClient()
+await redisClient.set(`signup_otp:${email}`, newOtp,{
   EX: 300
 })
 
