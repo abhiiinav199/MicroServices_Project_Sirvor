@@ -88,7 +88,7 @@ export const signUpController = async (
       sameSite: "none",
     } as const;
 
-    res.cookie("token", newUser.token, cookieOptions);
+    res.cookie("accessToken", newUser.token, cookieOptions);
 
     return res.status(201).json({
       success: true,
@@ -123,7 +123,7 @@ export const loginController = async (
       sameSite: "none",
     } as const;
 
-    res.cookie("token", user.token, cookieOptions);
+    res.cookie("accessToken", user.token, cookieOptions);
 
     res.status(200).json({
       error: false,

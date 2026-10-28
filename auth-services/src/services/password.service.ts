@@ -1,6 +1,5 @@
 import otpGenerator from "otp-generator";
 import { UserModel } from "../models/user.model.js";
-import { OtpModel } from "../models/otp.model.js";
 import { sendMailTemplate } from "../mail-template/mailTemplate.js";
 import axios from "axios";
 import { ApiError } from "../utils/ApiError.js";
@@ -92,7 +91,6 @@ export const forgotPasswordVerifyOtpService = async (
     { returnDocument: "after", runValidators: true },
   );
 
-  await OtpModel.deleteMany({ email: email });
 
 };
 

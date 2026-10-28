@@ -1,8 +1,8 @@
 import { getRedisClient } from "../config/redis.config.js";
-import { OtpModel } from "../models/otp.model.js";
 import { UserModel } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { generateAccessToken } from "../utils/generateAccessToken.js";
+import { generateRefreshToken } from "../utils/generateRefreshToken.js";
 import { hashPassword } from "../utils/hashPassword.js";
 import bcryptjs from "bcryptjs";
 
@@ -56,8 +56,6 @@ export const singUpService = async (data: IUserSignupData) => {
     role: role,
   });
 
-  //delete otp from db
-  await OtpModel.deleteMany({ email: email });
 
   const payload = {
     userId: newUser._id.toString(),
@@ -66,13 +64,14 @@ export const singUpService = async (data: IUserSignupData) => {
     fullName: fullName,
   };
 
-  const token = await generateAccessToken(payload);
+  const accessToken = await generateAccessToken(payload);
+  const refreshToken= await generateRefreshToken(payload)
   // Sensitive data sanitize
   const userResponse = newUser.toObject();
   delete (userResponse as any).password;
   return {
     user: userResponse,
-    token: token,
+    token: accessToken,
   };
 };
 
@@ -101,7 +100,7 @@ export const loginService = async (data: ILoginData) => {
     role: isUserExist.role,
   };
 
-  const token = generateAccessToken(payload);
+  const accessToken = generateAccessToken(payload);
 
   //Sensitive data sanitize
   const userResponse = isUserExist.toObject();
@@ -109,6 +108,6 @@ export const loginService = async (data: ILoginData) => {
 
   return {
     user: userResponse,
-    token: token,
+    token:  accessToken
   };
 };

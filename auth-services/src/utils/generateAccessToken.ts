@@ -10,12 +10,12 @@ export interface ITokenPayload {
   fullName: string;
 }
 export const generateAccessToken =  (payload: ITokenPayload):string => {
-        const secret = process.env.JWT_SECRET;
-          if (!secret) {
+        const ACCESS_TOKEN_JWT_SECRET = process.env.ACCESS_TOKEN_JWT_SECRET;
+          if (!ACCESS_TOKEN_JWT_SECRET) {
         throw new ApiError("JWT_SECRET  is not defined in environment variables", 500);
     }
-  const token = jwt.sign(payload,secret, {
-    expiresIn: "5h",
+  const accessToken = jwt.sign(payload, ACCESS_TOKEN_JWT_SECRET, {
+    expiresIn: "15m",
   });
-  return token;
+  return accessToken;
 };
