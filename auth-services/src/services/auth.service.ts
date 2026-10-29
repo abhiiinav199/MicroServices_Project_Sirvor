@@ -19,7 +19,7 @@ interface ILoginData {
   password: string;
 }
 
-export const singUpService = async (data: IUserSignupData) => {
+export const signUpService = async (data: IUserSignupData) => {
   const { fullName, email, password, role, otp } = data;
   const isUserRegistered = await UserModel.findOne({
     email: email,
@@ -56,7 +56,6 @@ export const singUpService = async (data: IUserSignupData) => {
     role: role,
   });
 
-
   const payload = {
     userId: newUser._id.toString(),
     email: email,
@@ -65,14 +64,19 @@ export const singUpService = async (data: IUserSignupData) => {
   };
 
   const accessToken = await generateAccessToken(payload);
-  const refreshToken= await generateRefreshToken(payload)
+  const refreshToken = await generateRefreshToken(payload);
+
+  //save refresh token redis
+  await redisClient.set(`session:${newUser._id}`, refreshToken, {
+    EX: 604800,
+  });
   // Sensitive data sanitize
   const userResponse = newUser.toObject();
   delete (userResponse as any).password;
   return {
     user: userResponse,
     accessToken: accessToken,
-    refreshToken: refreshToken as string | undefined
+    refreshToken: refreshToken as string | undefined,
   };
 };
 
@@ -102,7 +106,15 @@ export const loginService = async (data: ILoginData) => {
   };
 
   const accessToken = generateAccessToken(payload);
-  const refreshToken = generateRefreshToken(payload)
+  const userId= isUserExist._id
+  const refreshToken = generateRefreshToken({userId});
+
+  //redis client
+  const redisClient= getRedisClient()
+  //save refresh token redis
+  await redisClient.set(`session:${isUserExist._id}`, refreshToken, {
+    EX: 604800,
+  });
 
   //Sensitive data sanitize
   const userResponse = isUserExist.toObject();
@@ -110,7 +122,7 @@ export const loginService = async (data: ILoginData) => {
 
   return {
     user: userResponse,
-    accessToken:  accessToken,
-    refreshToken: refreshToken as string | undefined
+    accessToken: accessToken,
+    refreshToken: refreshToken as string | undefined,
   };
 };

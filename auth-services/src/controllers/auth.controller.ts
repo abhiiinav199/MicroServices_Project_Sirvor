@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/ApiError.js";
 import { sendEmailUser } from "../services/otp.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
-import { loginService, singUpService } from "../services/auth.service.js";
+import { loginService, signUpService } from "../services/auth.service.js";
 import {
   forgotPasswordServices,
   forgotPasswordVerifyOtpService,
@@ -74,7 +74,7 @@ export const signUpController = async (
 
     // call signUp service
 
-    const newUser = await singUpService({
+    const newUser = await signUpService({
       fullName,
       email,
       password,

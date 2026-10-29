@@ -4,7 +4,11 @@ import { ApiError } from "./ApiError.js";
 import { ITokenPayload } from "./generateAccessToken.js";
 dotenv.config();
 
-export const generateRefreshToken = (payload: ITokenPayload): string => {
+interface IRefreshTokenPayload{
+  userId: unknown
+}
+
+export const generateRefreshToken = (payload: IRefreshTokenPayload): string => {
 
   const REFRESH_TOKEN_JWT_SECRET = process.env.REFRESH_TOKEN_JWT_SECRET;
   if (!REFRESH_TOKEN_JWT_SECRET) {
