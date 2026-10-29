@@ -63,8 +63,11 @@ export const signUpService = async (data: IUserSignupData) => {
     fullName: fullName,
   };
 
+  const refreshTokenPayload= {
+    userId : newUser._id
+  }
   const accessToken = await generateAccessToken(payload);
-  const refreshToken = await generateRefreshToken(payload);
+  const refreshToken = await generateRefreshToken(refreshTokenPayload);
 
   //save refresh token redis
   await redisClient.set(`session:${newUser._id}`, refreshToken, {
@@ -106,8 +109,10 @@ export const loginService = async (data: ILoginData) => {
   };
 
   const accessToken = generateAccessToken(payload);
-  const userId= isUserExist._id
-  const refreshToken = generateRefreshToken({userId});
+  const refreshTokenPayload = {
+    userId : isUserExist._id.toString()
+  }
+  const refreshToken = generateRefreshToken(refreshTokenPayload);
 
   //redis client
   const redisClient= getRedisClient()
