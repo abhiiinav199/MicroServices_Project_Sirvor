@@ -4,7 +4,7 @@ import { createClient, RedisClientType } from "redis";
 import { ApiError } from "../utils/ApiError.js";
 
 let client:RedisClientType;
-const redisConnect = async () => {
+export const redisConnect = async () => {
   if (
     !process.env.REDIS_PASSWORD ||
     !process.env.REDIS_HOST ||

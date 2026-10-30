@@ -53,7 +53,7 @@ export const forgotPasswordServices = async (data: IForgotPasswordData) => {
   const mailData = {
     email: email,
     subject: "For Otp verification",
-    body: sendMailTemplate(Number(storedOtp)),
+    body: sendMailTemplate(Number(otp)),
     from: "Sirvor",
   };
   const mailServiceCall = await axios.post(
@@ -90,7 +90,7 @@ export const forgotPasswordVerifyOtpService = async (
     { resetToken: token, resetTokenExpiry: Date.now() + 10 * 60 * 1000 },
     { returnDocument: "after", runValidators: true },
   );
-
+return { resetToken: token };
 
 };
 
