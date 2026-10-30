@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/ApiError.js";
 import { sendEmailUser } from "../services/otp.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
-import { loginService, signUpService } from "../services/auth.service.js";
+import { loginService, refreshTokenService, signUpService } from "../services/auth.service.js";
 import {
   forgotPasswordServices,
   forgotPasswordVerifyOtpService,
@@ -83,7 +83,7 @@ export const signUpController = async (
     });
 
     const cookieOptions = {
-      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       httpOnly: true,
       secure: true,
       sameSite: "none",
@@ -141,7 +141,7 @@ export const loginController = async (
     const user = await loginService({ email, password });
 
     const cookieOptions = {
-      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       httpOnly: true,
       secure: true,
       sameSite: "none",
@@ -301,3 +301,41 @@ export const updatePasswordController = async (
     next(error);
   }
 };
+
+export const refreshTokenController= async(req: Request, res: Response, next: NextFunction)=>{
+  try {
+    const refreshToken = req.cookies.refreshToken
+
+    //validation
+    if(!refreshToken){
+      throw new ApiError("Refresh token missing", 401)
+    }
+    
+    // call refreshTokenService
+    const refreshTokenServiceCall = await refreshTokenService({refreshToken})
+
+
+    const cookieOptions = {
+     maxAge:7 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    } as const;
+
+    // res.cookie("refreshToken", newUser.refreshToken, cookieOptions);
+    res.cookie("refreshToken", refreshTokenServiceCall.newRefreshToken, cookieOptions)
+
+return res.status(200).json({
+  success: true,
+  error: false,
+  message: "New Access Token send successfully",
+  data: {
+    accessToken: refreshTokenServiceCall.accessToken,
+  },
+} as ApiResponse<{ accessToken: string }>);
+
+
+  } catch (error) {
+    next(error)
+  }
+}

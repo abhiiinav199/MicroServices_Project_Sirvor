@@ -5,6 +5,7 @@ import { generateAccessToken } from "../utils/generateAccessToken.js";
 import { generateRefreshToken } from "../utils/generateRefreshToken.js";
 import { hashPassword } from "../utils/hashPassword.js";
 import bcryptjs from "bcryptjs";
+import { verifyJwtToken } from "../utils/verifyJwtToken.js";
 
 interface IUserSignupData {
   fullName: string;
@@ -17,6 +18,10 @@ interface IUserSignupData {
 interface ILoginData {
   email: string;
   password: string;
+}
+
+interface IRefreshToken{
+  refreshToken: string
 }
 
 export const signUpService = async (data: IUserSignupData) => {
@@ -131,3 +136,47 @@ export const loginService = async (data: ILoginData) => {
     refreshToken: refreshToken as string | undefined,
   };
 };
+
+
+export const refreshTokenService= async (data:IRefreshToken)=>{
+  const {refreshToken} = data
+
+  // verify the refresh token 
+  const decoded= await verifyJwtToken(refreshToken)
+  const userId = decoded.userId;
+
+  // redis client
+  const redisClient = await getRedisClient()
+  // check redis session
+  const storedToken= await redisClient.get(`session:${userId}`)
+  
+  if(!storedToken || storedToken !== refreshToken){
+    throw new ApiError("Session expired", 403)
+  }
+
+  // user from DB
+  const userDetails = await UserModel.findById(userId)
+
+  if(!userDetails){
+    throw new ApiError("User not found", 404)
+  }
+    const payload = {
+    email: userDetails?.email,
+    userId: userId,
+    fullName: userDetails?.fullName,
+    role: userDetails?.role,
+  };
+
+   const accessToken = generateAccessToken(payload)
+  const newRefreshToken = generateRefreshToken({userId})
+
+  // store new refreshToken in redis
+ await redisClient.set(`session:${userId}`, newRefreshToken,{
+  EX: 604800
+ }) 
+
+ return {
+  accessToken,
+  newRefreshToken
+ }
+}

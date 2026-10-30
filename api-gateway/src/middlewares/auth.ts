@@ -19,7 +19,7 @@ export const loginValidation = async (
       throw new ApiError("Authentication token is missing", 401);
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as IAuthPayload
+    const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_JWT_SECRET as string) as IAuthPayload
 
     (req as any).user = decoded;
     next();
