@@ -345,7 +345,11 @@ export const logoutController= async (req : Request , res: Response, next: NextF
     const refreshToken= req.cookies.refreshToken
 
     if(!refreshToken){
-      throw new ApiError("No refresh token provided.",400)
+       res.status(200).json({
+      error: false,
+      success: true,
+      message:"Logout Successfully"
+    }as ApiResponse<null>)
     }
 
     //logoutService call
