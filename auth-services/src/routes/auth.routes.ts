@@ -1,5 +1,5 @@
 import express from "express"
-import { forgotPasswordController, forgotPasswordVerifyOtpController, loginController, refreshTokenController, resetPasswordController, sendEmailController, signUpController, updatePasswordController } from "../controllers/auth.controller.js"
+import { forgotPasswordController, forgotPasswordVerifyOtpController, loginController, logoutController, refreshTokenController, resetPasswordController, sendEmailController, signUpController, updatePasswordController } from "../controllers/auth.controller.js"
 
 const authRouter= express.Router()
 
@@ -11,4 +11,5 @@ authRouter.put("/forgot-password-verify-otp", forgotPasswordVerifyOtpController)
 authRouter.put("/reset-password",resetPasswordController)
 authRouter.put("/update-password", updatePasswordController)
 authRouter.post("/refresh-token", refreshTokenController)
+authRouter.post("/logout", logoutController)
 export default authRouter
