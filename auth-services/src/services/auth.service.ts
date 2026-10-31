@@ -23,6 +23,9 @@ interface ILoginData {
 interface IRefreshToken{
   refreshToken: string
 }
+interface ILogout{
+  refreshToken: string
+}
 
 export const signUpService = async (data: IUserSignupData) => {
   const { fullName, email, password, role, otp } = data;
@@ -179,4 +182,25 @@ export const refreshTokenService= async (data:IRefreshToken)=>{
   accessToken,
   newRefreshToken
  }
+}
+
+export const logoutSeviceCall= async(data:ILogout)=>{
+  const {refreshToken} = data
+
+  //verify the refreshToken
+  const decoded= verifyJwtToken(refreshToken)
+  
+  const userId = decoded.userId
+
+  //redsClient
+  const redisClient = getRedisClient()
+
+  await redisClient.del(`session:${userId}`)
+
+   await redisClient.set(`blacklist:${userId}`, "true", {
+    EX: 604800
+   })
+
+   
+
 }

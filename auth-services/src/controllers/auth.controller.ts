@@ -2,7 +2,7 @@ import express, { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/ApiError.js";
 import { sendEmailUser } from "../services/otp.service.js";
 import { ApiResponse } from "../types/apiResponse.types.js";
-import { loginService, refreshTokenService, signUpService } from "../services/auth.service.js";
+import { loginService, logoutSeviceCall, refreshTokenService, signUpService } from "../services/auth.service.js";
 import {
   forgotPasswordServices,
   forgotPasswordVerifyOtpService,
@@ -334,6 +334,30 @@ return res.status(200).json({
   },
 } as ApiResponse<{ accessToken: string }>);
 
+
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const logoutController= async (req : Request , res: Response, next: NextFunction)=>{
+  try {
+    const refreshToken= req.cookies.refreshToken
+
+    if(!refreshToken){
+      throw new ApiError("No refresh token provided.",400)
+    }
+
+    //logoutService call
+    const logoutService = await logoutSeviceCall({refreshToken})
+    
+    res.clearCookie("refreshToken")
+
+    res.status(200).json({
+      error: false,
+      success: true,
+      message:"Logout Successfully"
+    }as ApiResponse<null>)
 
   } catch (error) {
     next(error)
