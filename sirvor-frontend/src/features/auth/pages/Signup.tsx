@@ -7,10 +7,10 @@ const Signup = () => {
       {/* signup form */}
       <div className="flex flex-col gap-4">
         <div>
-          <Typography variant="h3" sx={{ fontWeight: 600 }}>
+          <Typography variant="h3" gutterBottom sx={{ fontWeight: 600 }}>
             Sign Up
           </Typography>
-          <p className="mt-2 text-gray-200">
+          <p className=" text-gray-200">
             Fill the form below to create your account.
           </p>
         </div>
