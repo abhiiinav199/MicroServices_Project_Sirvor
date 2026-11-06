@@ -8,7 +8,7 @@ import cookieParser from "cookie-parser"
 const app:Application = express ()
 app.use(express.json());
 app.use(cookieParser())
-app.use(cors({ origin: "*", credentials: true }))//process.env.CLIENT_URL
+app.use(cors({ origin: process.env.GATEWAY_URL, credentials: true }))//process.env.CLIENT_URL
 
 
 app.use("/", authRouter)

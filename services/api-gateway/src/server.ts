@@ -2,24 +2,26 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import proxy from "express-http-proxy";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
-import cors from "cors"
+import cors from "cors";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { loginValidation } from "./middlewares/auth.js";
 import { error } from "node:console";
 dotenv.config();
 
 const app: Application = express();
-app.use(cookieParser())
-app.use(cors({ origin: "*", credentials: true })) //process.env.CLIENT_URL
+app.use(cookieParser());
+app.use(express.json());
+// app.use(express.urlencoded({ extended: true }));
+app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true })); //process.env.CLIENT_URL
 //loggger
-app.use((req: Request, res: Response , next : NextFunction)=>{
-  console.log(`${req.method} ${req.url}`)
-  next()
-})
+app.use((req: Request, res: Response, next: NextFunction) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
 
-  
 const PORT = process.env.PORT || 4001;
-const AUTH_SERVICE_URL = process.env.AUTH_SERVICE_URL || "http://localhost:3001";
+const AUTH_SERVICE_URL =
+  process.env.AUTH_SERVICE_URL || "http://localhost:3001";
 
 // Central Proxy with header decorator (Industry Standard)
 const authProxy = proxy(AUTH_SERVICE_URL, {
@@ -36,12 +38,12 @@ const authProxy = proxy(AUTH_SERVICE_URL, {
   },
 
   proxyErrorHandler(err: any, res: Response, next: NextFunction) {
-    console.log("Proxy Error :", err.message)
+    console.log("Proxy Error :", err.message);
     res.status(500).json({
-      error:true,
-      success:false,
-      message:"Auth Service unavailable."
-    })
+      error: true,
+      success: false,
+      message: "Auth Service unavailable.",
+    });
     // next()
   },
 });
@@ -57,7 +59,9 @@ app.use(errorHandler);
 const startServer = async (): Promise<void> => {
   try {
     app.listen(PORT, () => {
-      console.log(`Gateway service is successfully running at http://localhost:${PORT}`);
+      console.log(
+        `Gateway service is successfully running at http://localhost:${PORT}`,
+      );
     });
   } catch (error) {
     console.log("Error in connection", error);
