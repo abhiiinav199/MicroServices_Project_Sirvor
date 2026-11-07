@@ -15,7 +15,7 @@ const SignUpForm = () => {
     role: "User",
   });
 
-  const [loading, setloading] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [showPassword, setshowPassword] = useState(true);
   const [showConfirmPassword, setshowConfirmPassword] = useState(true)
   const navigate= useNavigate()
@@ -36,7 +36,7 @@ const SignUpForm = () => {
 
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
-    setloading(true);
+    setLoading(true);
     const toastId = toast.loading("Sending mail...");
 
     if (formData.password.length < 3) {
@@ -64,7 +64,7 @@ const SignUpForm = () => {
       console.log(error);
       toast.dismiss(toastId);
     } finally {
-      setloading(false);
+      setLoading(false);
     }
   };
 

@@ -3,5 +3,6 @@ export interface signUpPayload{
     role:string,
     email: string,
     password: string,
-    confirmPassword: string
+    confirmPassword: string,
+    otp?: string
 }
