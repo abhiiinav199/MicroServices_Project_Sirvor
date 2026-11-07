@@ -9,7 +9,7 @@ const Signup = () => {
       <div className="flex flex-col gap-4 w-[50%]">
         <div>
           <Typography variant="h3" gutterBottom sx={{ fontWeight: 600 }}>
-            Sign Up
+            <span>Sign</span> <span className="text-yellow-400">Up</span>
           </Typography>
           <p className=" text-gray-200">
             Fill the form below to create your account.
@@ -21,7 +21,7 @@ const Signup = () => {
         </div>
       </div>
       {/* signup animation */}
-      <div className="w-[50%]">
+      <div className="w-[50%] flex items-center justify-center">
         <LogoAnimation/>
       </div>
     </div>
