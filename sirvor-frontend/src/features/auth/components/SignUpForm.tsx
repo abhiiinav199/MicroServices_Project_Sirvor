@@ -1,7 +1,7 @@
 import { Button, InputAdornment, TextField } from "@mui/material";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { signUpMailSendApiCall } from "../services/Signup";
 import { FaEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa6";
@@ -18,6 +18,7 @@ const SignUpForm = () => {
   const [loading, setloading] = useState(false);
   const [showPassword, setshowPassword] = useState(true);
   const [showConfirmPassword, setshowConfirmPassword] = useState(true)
+  const navigate= useNavigate()
 
   const setRoleHandler = (data: string) => {
     setformData((prev) => {
@@ -54,6 +55,9 @@ const SignUpForm = () => {
       if (res.success) {
         toast.success("Signup mail sent");
       }
+      navigate("/verify-otp",{
+        state: formData
+      })
 
       toast.dismiss(toastId);
     } catch (error) {
@@ -64,9 +68,6 @@ const SignUpForm = () => {
     }
   };
 
-  const showPasswordHandler = () => {
-    setshowPassword(true);
-  };
   return (
     <div className="w-full bg-white rounded-md p-2 text-black flex flex-col items-center justify-center gap-4">
       <form onSubmit={submitHandler} className="flex flex-col gap-2  w-full">

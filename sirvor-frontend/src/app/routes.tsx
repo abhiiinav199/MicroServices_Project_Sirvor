@@ -3,6 +3,7 @@ import Home from "../pages/Home";
 import App from "../App";
 import Signup from "../features/auth/pages/Signup";
 import { NotFound } from "../pages/NotFound";
+import VerifyOtp from "../features/auth/pages/VerifyOtp";
 
 export const routes = createBrowserRouter([
   {
@@ -17,6 +18,7 @@ export const routes = createBrowserRouter([
       },
       // aage jaake aur pages yahan add ho sakte hain:
       { path: "signup", element: <Signup /> },
+      {path: "verify-otp" , element:<VerifyOtp/>}
       // { path: "dashboard", element: <Dashboard /> },
     ],
   },
