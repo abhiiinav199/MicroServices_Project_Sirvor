@@ -5,6 +5,7 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 import toast from "react-hot-toast";
 import { signUpApiCall, signUpMailSendApiCall } from "../services/Signup";
+import axios from "axios";
 
 const VerifyOtp = () => {
   const location = useLocation();
@@ -60,6 +61,11 @@ const VerifyOtp = () => {
     } catch (error) {
       console.log(error);
       toast.dismiss(toastId);
+      if(axios.isAxiosError(error)){
+        toast.error(error?.response?.data?.message)
+      }else{
+        toast.error("Something went wrong")
+      }
     } finally {
       setLoading(false);
     }

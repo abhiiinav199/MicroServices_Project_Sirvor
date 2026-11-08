@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { signUpMailSendApiCall } from "../services/Signup";
 import { FaEye } from "react-icons/fa";
 import { FaRegEyeSlash } from "react-icons/fa6";
+import axios from "axios";
 
 const SignUpForm = () => {
   const [formData, setformData] = useState({
@@ -63,6 +64,11 @@ const SignUpForm = () => {
     } catch (error) {
       console.log(error);
       toast.dismiss(toastId);
+      if(axios.isAxiosError(error)){
+        toast.error(error?.response?.data?.message)
+      }else{
+        toast.error("Something went wrong")
+      }
     } finally {
       setLoading(false);
     }
