@@ -12,6 +12,8 @@ const VerifyOtp = () => {
   const data = location.state;
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
+  console.log(data);
+  
 
 
   const signUpHandler = async () => {
@@ -38,12 +40,16 @@ const VerifyOtp = () => {
       if (res.success) {
         toast.success(res.message);
         setLoading(false)
+        toast.dismiss(toastId);
       }
-      toast.dismiss(toastId);
     } catch (error) {
       console.log(error);
       toast.dismiss(toastId);
-      toast.error(error.res.data.message)
+      if(axios.isAxiosError(error)){
+        toast.error(error?.response?.data?.message)
+      }else{
+        toast.error("Something went wrong")
+      }
     } finally {
       setLoading(false);
     }
@@ -53,11 +59,10 @@ const VerifyOtp = () => {
     const toastId = toast.loading("Sending otp...")
        try {
       const res = await signUpMailSendApiCall(data);
-      if (res.success) {
-        toast.success("Signup mail sent");
+      if (res?.success) {
+        toast.success(res?.message);
+        toast.dismiss(toastId);
       }
-
-      toast.dismiss(toastId);
     } catch (error) {
       console.log(error);
       toast.dismiss(toastId);

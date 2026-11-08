@@ -53,8 +53,8 @@ const SignUpForm = () => {
     }
     try {
       const res = await signUpMailSendApiCall(formData);
-      if (res.success) {
-        toast.success("Signup mail sent");
+      if (res?.success) {
+        toast.success(res?.message);
       }
       navigate("/verify-otp",{
         state: formData
