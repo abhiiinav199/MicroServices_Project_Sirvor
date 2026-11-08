@@ -5,7 +5,9 @@ try {
     if(!process.env.MONGO_URI){
        throw new Error("MONGO_URI not found in .env file")
     }
-   const db = await mongoose.connect(process.env.MONGO_URI) 
+   const db = await mongoose.connect(process.env.MONGO_URI,{
+    dbName: "sirvorAuth_Db"
+   }) 
    console.log("Auth service connected to db successfully")
 
 } catch (error) {
