@@ -38,19 +38,19 @@ const SignUpForm = () => {
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    const toastId = toast.loading("Sending mail...");
-
+    
     if (formData.password.length < 3) {
       toast.error(
         "Password is too short, Please provide at least 3 characters.",
       );
       return;
     }
-
+    
     if (formData.password !== formData.confirmPassword) {
       toast.error("Password and confirm password does not match");
       return;
     }
+    const toastId = toast.loading("Sending mail...");
     try {
       const res = await signUpMailSendApiCall(formData);
       if (res?.success) {
@@ -66,6 +66,7 @@ const SignUpForm = () => {
       toast.dismiss(toastId);
       if(axios.isAxiosError(error)){
         toast.error(error?.response?.data?.message)
+        toast.dismiss(toastId)
       }else{
         toast.error("Something went wrong")
       }

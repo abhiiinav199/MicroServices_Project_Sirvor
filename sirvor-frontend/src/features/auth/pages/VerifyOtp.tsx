@@ -6,13 +6,16 @@ import { Button } from "@mui/material";
 import toast from "react-hot-toast";
 import { signUpApiCall, signUpMailSendApiCall } from "../services/Signup";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setToken } from "../authSlice";
 
 const VerifyOtp = () => {
   const location = useLocation();
   const data = location.state;
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  console.log(data);
+  const dipatch = useDispatch()
+
   
 
 
@@ -38,10 +41,14 @@ const VerifyOtp = () => {
       setLoading(true);
       const res = await signUpApiCall(signUpData);
       if (res.success) {
+        dipatch(setToken(res.data.accessToken))
         toast.success(res.message);
         setLoading(false)
         toast.dismiss(toastId);
       }
+      console.log("data", res);
+      
+     
     } catch (error) {
       console.log(error);
       toast.dismiss(toastId);
