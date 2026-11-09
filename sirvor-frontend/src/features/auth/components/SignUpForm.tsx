@@ -43,12 +43,12 @@ const SignUpForm = () => {
       toast.error(
         "Password is too short, Please provide at least 3 characters.",
       );
-      return;
+      return setLoading(false) ;
     }
     
     if (formData.password !== formData.confirmPassword) {
       toast.error("Password and confirm password does not match");
-      return;
+      return setLoading(false) ;
     }
     const toastId = toast.loading("Sending mail...");
     try {

@@ -6,3 +6,8 @@ export interface signUpPayload{
     confirmPassword: string,
     otp?: string
 }
+
+export interface loginPayload{
+    email: string,
+    password: string,
+}

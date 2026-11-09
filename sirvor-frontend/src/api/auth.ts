@@ -1,4 +1,4 @@
-import type { signUpPayload } from "../types/auth"
+import type { loginPayload, signUpPayload } from "../types/auth"
 import api from "./axios"
 
 
@@ -9,4 +9,8 @@ export const signUpMailSendApi = (data: signUpPayload) =>{
 
 export const registerUser = (data:signUpPayload)=>{
     return api.post("/signUp", data)
+}
+
+export const loginUserApi= (data: loginPayload)=>{
+    return api.post("/login", data)
 }
