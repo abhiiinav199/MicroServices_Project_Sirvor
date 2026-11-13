@@ -5,6 +5,7 @@ import Signup from "../features/auth/pages/Signup";
 import { NotFound } from "../pages/NotFound";
 import VerifyOtp from "../features/auth/pages/VerifyOtp";
 import Login from "../features/auth/pages/Login";
+import ForgotPassword from "../features/auth/pages/ForgotPassword";
 
 export const routes = createBrowserRouter([
   {
@@ -20,7 +21,8 @@ export const routes = createBrowserRouter([
       // aage jaake aur pages yahan add ho sakte hain:
       { path: "signup", element: <Signup /> },
       {path: "verify-otp" , element:<VerifyOtp/>},
-      {path: "login", element:<Login/>}
+      {path: "login", element:<Login/>},
+      {path: "forgot-password", element:<ForgotPassword/>}
       // { path: "dashboard", element: <Dashboard /> },
     ],
   },
