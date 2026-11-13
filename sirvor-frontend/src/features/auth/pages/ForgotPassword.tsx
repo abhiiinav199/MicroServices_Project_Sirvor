@@ -1,6 +1,7 @@
 import { Button, TextField, Typography } from "@mui/material";
 import LogoAnimation from "../components/LogoAnimation";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -10,6 +11,21 @@ const ForgotPassword = () => {
     const { value } = e.target;
     setEmail(value);
   };
+
+  const submitHandler= (e: React.FormEvent) =>{
+    e.preventDefault()
+
+    if(!email){
+      toast.error("Please enter your email")
+      return setLoading(false)
+    }
+    try {
+      setLoading(true)
+
+    } catch (error) {
+      
+    }
+  }
   return (
     <div className="w-[80%] mx-auto mt-1 flex flex-row">
       {/* signup form */}
@@ -25,7 +41,7 @@ const ForgotPassword = () => {
         </div>
 
         {/* forgot password form */}
-        <form className="w-full mt-28 bg-white rounded-md px-2  py-6 text-black flex flex-col items-center justify-center gap-4">
+        <form className="w-full mt-28 bg-white rounded-md px-2  py-6 text-black flex flex-col items-center justify-center gap-4" onSubmit={submitHandler}>
           <TextField
             type="email"
             fullWidth

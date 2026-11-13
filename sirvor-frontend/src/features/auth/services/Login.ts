@@ -5,7 +5,7 @@ export const loginUserApiCall =async (data: loginPayload) =>{
     const res= await loginUserApi(data)
 
     if(!res.data.success){
-        throw new Error("Error occured during jotp verify api call")
+        throw new Error("Error occured during otp verify api call")
     }
     return res.data
 
