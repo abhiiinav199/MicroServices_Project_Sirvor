@@ -4,7 +4,6 @@ import OtpInput from "react-otp-input";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import toast from "react-hot-toast";
-import { useDispatch } from "react-redux";
 import { forgotPasswordOtpApiCall } from "../services/Password";
 import axios from "axios";
 
@@ -13,9 +12,6 @@ const ForgotPasswordOtpVerify = () => {
   const {email} = location.state;
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  // const dipatch = useDispatch()
-
-  
 
 
   const forgotPasswordOtpHandler = async () => {

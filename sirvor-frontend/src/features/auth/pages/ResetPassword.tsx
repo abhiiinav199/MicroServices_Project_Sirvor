@@ -10,7 +10,7 @@ const ResetPassword = () => {
       <div className="flex flex-col gap-4 w-[50%]">
         <div>
           <Typography variant="h3" gutterBottom sx={{ fontWeight: 600 }}>
-            <span>Welcome</span> <span className="text-yellow-400">!</span>
+            <span>Change Your</span> <span className="text-yellow-400">Password</span>
           </Typography>
           <p className=" text-gray-200">
             Login to Servor to continue to servor.

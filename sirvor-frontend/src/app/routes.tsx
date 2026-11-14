@@ -7,6 +7,7 @@ import VerifyOtp from "../features/auth/pages/VerifyOtp";
 import Login from "../features/auth/pages/Login";
 import ForgotPassword from "../features/auth/pages/ForgotPassword";
 import ForgotPasswordOtpVerify from "../features/auth/pages/ForgotPasswordOtpVerify";
+import ResetPassword from "../features/auth/pages/ResetPassword";
 
 export const routes = createBrowserRouter([
   {
@@ -25,6 +26,7 @@ export const routes = createBrowserRouter([
       {path: "login", element:<Login/>},
       {path: "forgot-password", element:<ForgotPassword/>},
       {path: "forgot-password-verify-otp", element:<ForgotPasswordOtpVerify/>},
+      {path: "reset-password", element:<ResetPassword/>},
       // { path: "dashboard", element: <Dashboard /> },
     ],
   },
