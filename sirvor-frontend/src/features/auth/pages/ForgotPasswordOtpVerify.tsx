@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import LogoAnimation from "../components/LogoAnimation";
 import OtpInput from "react-otp-input";
 import { useState } from "react";
@@ -12,7 +12,7 @@ const ForgotPasswordOtpVerify = () => {
   const {email} = location.state;
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const navigate =  useNavigate()
 
   const forgotPasswordOtpHandler = async () => {
     if (!otp) {
@@ -35,6 +35,11 @@ const ForgotPasswordOtpVerify = () => {
         (false)
         toast.dismiss(toastId)
         toast.success(res?.message)
+        navigate("/reset-password",{
+          state:{
+            token: res?.data?.data?.resetToken
+          }
+        })
       }
       console.log(res)
       

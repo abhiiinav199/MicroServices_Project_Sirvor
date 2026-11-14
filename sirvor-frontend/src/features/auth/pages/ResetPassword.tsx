@@ -2,8 +2,13 @@
 import { Typography } from "@mui/material";
 import LogoAnimation from "../components/LogoAnimation";
 import LoginForm from "../components/LoginForm";
+import { useLocation } from "react-router-dom";
 
 const ResetPassword = () => {
+    const location= useLocation()
+    const {token} = location.state
+    console.log("token", token)
+
   return (
     <div className="w-[80%] mx-auto mt-1 flex flex-row">
       {/* signup form */}
