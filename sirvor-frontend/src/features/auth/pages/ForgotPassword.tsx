@@ -2,6 +2,8 @@ import { Button, TextField, Typography } from "@mui/material";
 import LogoAnimation from "../components/LogoAnimation";
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import { forgotPasswordApiCall } from "../services/Password";
+import axios from "axios";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -12,18 +14,36 @@ const ForgotPassword = () => {
     setEmail(value);
   };
 
-  const submitHandler= (e: React.FormEvent) =>{
+  const submitHandler= async(e: React.FormEvent) =>{
     e.preventDefault()
 
     if(!email){
       toast.error("Please enter your email")
       return setLoading(false)
     }
+   const toastId = toast.loading("Checking and processing...")
     try {
       setLoading(true)
 
-    } catch (error) {
-      
+      const res= await forgotPasswordApiCall({email})
+      if(res?.success){
+        toast.dismiss(toastId)
+        toast.success(res?.message)
+      }
+    
+      console.log("data",res);
+    
+      setLoading(false)
+     } catch (error) {
+      console.log(error);
+      if(axios.isAxiosError(error)){
+        toast.error(error?.response?.data?.message)
+        toast.dismiss(toastId )
+      }else{
+        toast.error("Something went wrong")
+      }
+    } finally {
+      setLoading(false);
     }
   }
   return (
