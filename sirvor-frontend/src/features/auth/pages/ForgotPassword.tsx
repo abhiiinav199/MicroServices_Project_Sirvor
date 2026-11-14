@@ -4,10 +4,12 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { forgotPasswordApiCall } from "../services/Password";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
 
   const onChangeEmail = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -29,11 +31,9 @@ const ForgotPassword = () => {
       if(res?.success){
         toast.dismiss(toastId)
         toast.success(res?.message)
-      }
-    
-      console.log("data",res);
-    
+      }    
       setLoading(false)
+      navigate("/forgot-password-verify-otp",{state:{email:email}})
      } catch (error) {
       console.log(error);
       if(axios.isAxiosError(error)){

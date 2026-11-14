@@ -15,3 +15,8 @@ export interface loginPayload{
 export interface forgotPasswordPayload{
     email: string
 }
+
+export interface forgotPasswordOtpVerifyPayload{
+    email:string,
+    otp: string
+}

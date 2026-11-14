@@ -1,4 +1,4 @@
-import type { forgotPasswordPayload, loginPayload, signUpPayload } from "../types/auth"
+import type { forgotPasswordOtpVerifyPayload, forgotPasswordPayload, loginPayload, signUpPayload } from "../types/auth"
 import api from "./axios"
 
 
@@ -14,6 +14,11 @@ export const registerUser = (data:signUpPayload)=>{
 export const loginUserApi= (data: loginPayload)=>{
     return api.post("/login", data)
 }
+
 export const forgotPasswordApi= (data: forgotPasswordPayload)=>{
     return api.post("/forgot-password", data)
+}
+
+export const forgotPasswordOtpVerifyApi= (data: forgotPasswordOtpVerifyPayload)=>{
+    return api.put("/forgot-password-verify-otp", data)
 }

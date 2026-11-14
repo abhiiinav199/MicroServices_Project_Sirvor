@@ -4,22 +4,21 @@ import OtpInput from "react-otp-input";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import toast from "react-hot-toast";
-import { signUpApiCall, signUpMailSendApiCall } from "../services/Signup";
-import axios from "axios";
 import { useDispatch } from "react-redux";
-import { setToken } from "../authSlice";
+import { forgotPasswordOtpApiCall } from "../services/Password";
+import axios from "axios";
 
 const ForgotPasswordOtpVerify = () => {
   const location = useLocation();
-  const data = location.state;
+  const {email} = location.state;
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const dipatch = useDispatch()
+  // const dipatch = useDispatch()
 
   
 
 
-  const signUpHandler = async () => {
+  const forgotPasswordOtpHandler = async () => {
     if (!otp) {
       toast.error("Please fill the otp.");
     }
@@ -27,33 +26,25 @@ const ForgotPasswordOtpVerify = () => {
     if (otp.length < 4) {
       toast.error("Please fill the 4 digits valid otp.");
     }
-    const signUpData = {
-      fullName: data.fullName,
-      email: data.email,
-      password: data.password,
-      role: data.role,
-      confirmPassword: data.confirmPassword,
-      otp: otp,
-    };
+    
     const toastId = toast.loading("Verifying otp...");
 
     try {
-      setLoading(true);
-      const res = await signUpApiCall(signUpData);
-      if (res.success) {
-        dipatch(setToken(res.data.accessToken))
-        toast.success(res.message);
-        setLoading(false)
-        toast.dismiss(toastId);
+      setLoading(true)
+      const res= await forgotPasswordOtpApiCall({
+        email: email, otp: otp
+      })
+      if(res?.success){
+        setLoading
+        (false)
+        toast.dismiss(toastId)
+        toast.success(res?.message)
       }
-      console.log("data", res);
       
-     
     } catch (error) {
-      console.log(error);
-      toast.dismiss(toastId);
-      if(axios.isAxiosError(error)){
+       if(axios.isAxiosError(error)){
         toast.error(error?.response?.data?.message)
+        toast.dismiss(toastId )
       }else{
         toast.error("Something went wrong")
       }
@@ -62,26 +53,7 @@ const ForgotPasswordOtpVerify = () => {
     }
   };
 
-  const resendOtpHandler= async ()=>{
-    const toastId = toast.loading("Sending otp...")
-       try {
-      const res = await signUpMailSendApiCall(data);
-      if (res?.success) {
-        toast.success(res?.message);
-        toast.dismiss(toastId);
-      }
-    } catch (error) {
-      console.log(error);
-      toast.dismiss(toastId);
-      if(axios.isAxiosError(error)){
-        toast.error(error?.response?.data?.message)
-      }else{
-        toast.error("Something went wrong")
-      }
-    } finally {
-      setLoading(false);
-    }
-  }
+ 
   return (
     <div className="w-[80%] mx-auto mt-1 flex flex-row h-[calc(100vh-60px)] items-center justify-center">
       {/* signup form */}
@@ -91,7 +63,7 @@ const ForgotPasswordOtpVerify = () => {
           <p className="font-semibold">
             Please enter it below to verify your email
           </p>
-          <p className="tex-blue-700">{data?.email}</p>
+          <p className="tex-blue-700">{email}</p>
         </div>
 
         <div className="flex flex-col gap-1 justify-center items-center">
@@ -108,8 +80,9 @@ const ForgotPasswordOtpVerify = () => {
             )}
           />
           <Button
+          type="submit"
           disabled={loading}
-            onClick={signUpHandler}
+          onClick={forgotPasswordOtpHandler}
             variant="contained"
             sx={{ marginTop: "32px", width: "400px", textTransform: "none" }}
             size="large"
@@ -120,7 +93,7 @@ const ForgotPasswordOtpVerify = () => {
 
         <div className="flex flex-col gap-1 justify-center items-center">
           <p>Don't get the code ?</p>
-          <p className=" underline cursor-pointer" onClick={resendOtpHandler}>Resend Code</p>
+          <p className=" underline cursor-pointer" >Resend Code</p>
         </div>
       </div>
       {/* signup animation */}
