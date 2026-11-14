@@ -90,7 +90,7 @@ export const forgotPasswordVerifyOtpService = async (
     { resetToken: token, resetTokenExpiry: Date.now() + 10 * 60 * 1000 },
     { returnDocument: "after", runValidators: true },
   );
-return { resetToken: token };
+return { data: updatedUser};
 
 };
 

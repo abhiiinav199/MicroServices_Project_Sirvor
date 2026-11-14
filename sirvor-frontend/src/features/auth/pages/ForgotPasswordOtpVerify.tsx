@@ -40,6 +40,7 @@ const ForgotPasswordOtpVerify = () => {
         toast.dismiss(toastId)
         toast.success(res?.message)
       }
+      console.log(res)
       
     } catch (error) {
        if(axios.isAxiosError(error)){
