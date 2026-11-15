@@ -1,6 +1,6 @@
 import { Button, InputAdornment, TextField, Typography } from "@mui/material";
 import LogoAnimation from "../components/LogoAnimation";
-import { Link, useLocation } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useState } from "react";
 import { FaEye, FaRegEyeSlash } from "react-icons/fa";
 
@@ -9,7 +9,7 @@ const ResetPassword = () => {
   const { token } = location.state;
   const [showPassword, setshowPassword] = useState(true);
   const [showConfirmPassword, setshowConfirmPassword] = useState(true);
-  const [loading, setLoading] = useState(second);
+  const [loading, setLoading] = useState(false);
 
   return (
     <div className="w-[80%] mx-auto mt-1 flex flex-row">
