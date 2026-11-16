@@ -20,3 +20,9 @@ export interface forgotPasswordOtpVerifyPayload{
     email:string,
     otp: string
 }
+
+export interface resetPasswordPayload{
+    token: string,
+    password: string,
+    confirmPassword:string
+}
