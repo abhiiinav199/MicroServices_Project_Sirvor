@@ -88,7 +88,7 @@ const ResetPassword = () => {
                 size="large"
                 sx={{ textTransform: "none" }}
               >
-                Log In
+               Reset password
               </Button>
             </form>
           </div>
