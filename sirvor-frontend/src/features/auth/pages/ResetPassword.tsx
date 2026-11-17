@@ -1,11 +1,16 @@
 import { Button, InputAdornment, TextField, Typography } from "@mui/material";
 import LogoAnimation from "../components/LogoAnimation";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FaEye, FaRegEyeSlash } from "react-icons/fa";
+import toast from "react-hot-toast";
+import { resetPasswordApiCall } from "../services/Password";
+import axios from "axios";
 
 const ResetPassword = () => {
   const location = useLocation();
+  const navigate= useNavigate()
+
   const { token } = location.state;
   const [showPassword, setshowPassword] = useState(true);
   const [showConfirmPassword, setshowConfirmPassword] = useState(true);
@@ -13,6 +18,7 @@ const ResetPassword = () => {
   const [formData, setformData] = useState({
     password: "",
     confirmPassword: "",
+    token: ""
   });
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +33,44 @@ const ResetPassword = () => {
   };
   const submitHandler = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.password || !formData.confirmPassword) {
+      toast.error("Please fill the input fields");
+      return
+    }
+
+    if (formData.password.length < 3) {
+      toast.error("Password is too short.");
+      return
+
+    }
+
+    if(formData.password !== formData.confirmPassword){
+      toast.error("Password and confirmPassword not matched. It must be same")
+      return
+    }
+
+    formData.token= token
+    const toastId= toast.loading("Reset password...")
+    try {
+      setLoading(true)
+      const res = await resetPasswordApiCall(formData)
+      if(res?.success){
+        toast.success(res?.message)
+        toast.dismiss(toastId)
+        setLoading(false)
+        navigate("/login")
+      }
+    } catch (error) {
+      if(axios.isAxiosError(error)){
+         toast.error(error?.response?.data?.message)
+        toast.dismiss(toastId )
+      }else{
+        toast.error("Something went wrong")
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -45,7 +89,7 @@ const ResetPassword = () => {
 
         <div className="mt-28">
           <div className="w-full bg-white rounded-md p-2 text-black flex flex-col items-center justify-center gap-4">
-            <form onSubmit={() => {}} className="flex flex-col gap-2  w-full">
+            <form onSubmit={submitHandler} className="flex flex-col gap-2  w-full">
               <TextField
                 type={showConfirmPassword ? "password" : "text"}
                 fullWidth
