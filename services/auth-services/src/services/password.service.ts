@@ -108,6 +108,9 @@ export const resetPasswordService = async (data: IResetPasswordData) => {
     throw new ApiError("Session expired", 401);
   }
 
+  if(userDetails.password ===password){
+    throw new ApiError("Password found in Db, Please select new password ", 401)
+  }
   const hashedPassword = await hashPassword(password);
 
   //update the user
