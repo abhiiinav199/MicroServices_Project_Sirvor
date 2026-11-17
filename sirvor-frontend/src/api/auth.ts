@@ -24,5 +24,5 @@ export const forgotPasswordOtpVerifyApi= (data: forgotPasswordOtpVerifyPayload)=
 }
 
 export const resetPasswordApi= (data: resetPasswordPayload)=>{
-    return api.put("/reset-password")
+    return api.put("/reset-password", data)
 }

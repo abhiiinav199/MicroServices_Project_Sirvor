@@ -10,6 +10,24 @@ const ResetPassword = () => {
   const [showPassword, setshowPassword] = useState(true);
   const [showConfirmPassword, setshowConfirmPassword] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [formData, setformData] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setformData((prev) => {
+      return {
+        ...prev,
+        [name]: value,
+      };
+    });
+  };
+  const submitHandler = async (e: React.FormEvent) => {
+    e.preventDefault();
+  };
 
   return (
     <div className="w-[80%] mx-auto mt-1 flex flex-row">
@@ -35,7 +53,9 @@ const ResetPassword = () => {
                 placeholder="New Password"
                 size="medium"
                 required
-                name="new-password"
+                onChange={onChangeHandler}
+                value={formData.password}
+                name="password"
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -62,6 +82,9 @@ const ResetPassword = () => {
                 placeholder="Re-enter new password"
                 size="medium"
                 required
+                onChange={onChangeHandler}
+                value={formData.confirmPassword}
+                name="confirmPassword"
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -71,7 +94,7 @@ const ResetPassword = () => {
                           className="cursor-pointer"
                         />
                       ) : (
-                        <FaEye  
+                        <FaEye
                           onClick={() => setshowPassword(true)}
                           className="cursor-pointer"
                         />
@@ -88,7 +111,7 @@ const ResetPassword = () => {
                 size="large"
                 sx={{ textTransform: "none" }}
               >
-               Reset password
+                Reset password
               </Button>
             </form>
           </div>
