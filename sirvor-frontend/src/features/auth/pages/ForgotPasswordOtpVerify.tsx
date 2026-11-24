@@ -99,7 +99,7 @@ const ForgotPasswordOtpVerify = () => {
         </div>
       </div>
       {/* signup animation */}
-      <div className="w-[50%] flex items-center justify-center">
+      <div className="w-[50%] h-[calc(100vh-60px)] flex items-center justify-center">
         <LogoAnimation />
       </div>
     </div>

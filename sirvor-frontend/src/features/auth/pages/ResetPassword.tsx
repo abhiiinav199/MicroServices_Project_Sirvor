@@ -87,7 +87,7 @@ const ResetPassword = () => {
           </p>
         </div>
 
-        <div className="mt-28">
+        <div className="mt-48">
           <div className="w-full bg-white rounded-md p-2 text-black flex flex-col items-center justify-center gap-4">
             <form onSubmit={submitHandler} className="flex flex-col gap-2  w-full">
               <TextField
@@ -162,7 +162,7 @@ const ResetPassword = () => {
         </div>
       </div>
       {/* signup animation */}
-      <div className="w-[50%] flex items-center justify-center mt-42">
+      <div className="w-[50%] h-[calc(100vh-60px)] flex items-center justify-center">
         <LogoAnimation />
       </div>
     </div>

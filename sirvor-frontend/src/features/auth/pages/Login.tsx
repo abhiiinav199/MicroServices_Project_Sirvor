@@ -16,12 +16,12 @@ const Login = () => {
           </p>
         </div>
 
-        <div className="mt-28">
+        <div className="mt-24">
           <LoginForm />
         </div>
       </div>
       {/* signup animation */}
-      <div className="w-[50%] flex items-center justify-center mt-42">
+      <div className="w-[50%] h-[calc(100vh-60px)] flex items-center justify-center">
         <LogoAnimation/>
       </div>
     </div>

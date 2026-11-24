@@ -61,7 +61,7 @@ const ForgotPassword = () => {
         </div>
 
         {/* forgot password form */}
-        <form className="w-full mt-28 bg-white rounded-md px-2  py-6 text-black flex flex-col items-center justify-center gap-4" onSubmit={submitHandler}>
+        <form className="w-full mt-45 bg-white rounded-md px-2  py-6 text-black flex flex-col items-center justify-center gap-4" onSubmit={submitHandler}>
           <TextField
             type="email"
             fullWidth
@@ -85,9 +85,9 @@ const ForgotPassword = () => {
         </form>
       </div>
       {/* signup animation */}
-      <div className="w-[50%] flex items-center justify-center mt-42">
-        <LogoAnimation />
-      </div>
+        <div className="w-[50%] h-[calc(100vh-60px)] flex items-center justify-center">
+          <LogoAnimation />
+        </div>
     </div>
   );
 };
